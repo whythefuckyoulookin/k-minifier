@@ -7,29 +7,14 @@ import {
 import { Request } from 'express';
 import { Observable } from 'rxjs';
 import { tap } from 'rxjs/operators';
-import * as winston from 'winston';
-import 'winston-daily-rotate-file';
-
-const transport = new winston.transports.DailyRotateFile({
-  filename: 'application-%DATE%.log',
-  datePattern: 'YYYY-MM-DD',
-  zippedArchive: true,
-  maxSize: '20m',
-  maxFiles: '14d',
-  dirname: 'logs',
-});
-
-const logger = winston.createLogger({
-  level: 'info',
-  format: winston.format.combine(
-    winston.format.timestamp(),
-    winston.format.json(),
-  ),
-  transports: [transport],
-});
+import { LoggerService } from '../logger/logger.service';
 
 @Injectable()
 export class LoggingInterceptor implements NestInterceptor {
+  constructor(private readonly loggerService: LoggerService) {
+    this.loggerService.setContext(LoggingInterceptor.name);
+  }
+
   intercept(context: ExecutionContext, next: CallHandler): Observable<any> {
     const request = context.switchToHttp().getRequest<Request>();
     const method = request.method;
@@ -41,17 +26,11 @@ export class LoggingInterceptor implements NestInterceptor {
         const response = context.switchToHttp().getResponse();
         const statusCode = response.statusCode;
         const delay = Date.now() - now;
-
-        logger.info({
-          message: `${method} ${url} ${statusCode} ${delay}ms`,
-          method,
-          url,
-          statusCode,
-          delay,
-          context: {
-            ip: request.ip
-          }
-        });
+        this.loggerService.log(
+          context,
+          `${method} ${url} ${statusCode} ${delay}ms`,
+          { ip: request.ip }
+        );
       }),
     );
   }

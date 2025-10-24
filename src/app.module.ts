@@ -1,16 +1,10 @@
 import { Module } from '@nestjs/common';
 import { CssModule } from './css/css.module';
-import { APP_INTERCEPTOR } from '@nestjs/core';
-import { LoggingInterceptor } from './interceptors/logging.interceptor';
+import { SharedModule } from './shared/shared.module';
 
 @Module({
-  imports: [CssModule],
+  imports: [SharedModule, CssModule],
   controllers: [],
-  providers: [
-    {
-      provide: APP_INTERCEPTOR,
-      useClass: LoggingInterceptor,
-    },
-  ],
+  providers: [],
 })
 export class AppModule { }

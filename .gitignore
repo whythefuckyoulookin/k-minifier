@@ -1,7 +1,9 @@
-node_modules/
 dist/
-uploads/
+documentation/
 logs/
+node_modules/
+out/
+uploads/
 
 pnpm-lock.yaml
 
