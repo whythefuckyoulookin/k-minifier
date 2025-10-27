@@ -1,9 +1,9 @@
-import { createParamDecorator, type ExecutionContext } from '@nestjs/common';
+import { BadRequestException, createParamDecorator, type ExecutionContext } from '@nestjs/common';
 import type { Request } from 'express';
 
 export interface IClientHeaders {
-  platform?: string
-  login?: string
+  platform: string
+  login: string
 }
 
 export const ClientHeaders = createParamDecorator<unknown, IClientHeaders>(
@@ -19,7 +19,7 @@ export const ClientHeaders = createParamDecorator<unknown, IClientHeaders>(
       || platform.length > 64
       || !(/^[A-Za-z0-9]+$/.test(platform))
     )
-      platform = undefined
+      throw new BadRequestException('x-client-platform не указан или указан некорректно')
 
     if (
       !login
@@ -28,7 +28,7 @@ export const ClientHeaders = createParamDecorator<unknown, IClientHeaders>(
       || login.length > 64
       || !(/^[A-Za-z0-9]+$/.test(login))
     )
-      login = undefined
+      throw new BadRequestException('x-client-login не указан или указан некорректно')
 
     return { platform, login };
   },

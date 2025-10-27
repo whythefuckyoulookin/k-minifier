@@ -7,12 +7,12 @@ import {
 import { Request } from 'express';
 import { Observable } from 'rxjs';
 import { tap } from 'rxjs/operators';
-import { LoggerService } from '../logger/logger.service';
+import { LoggerService } from '../logger.service';
 
 @Injectable()
-export class LoggingInterceptor implements NestInterceptor {
+export class LoggerInterceptor implements NestInterceptor {
   constructor(private readonly loggerService: LoggerService) {
-    this.loggerService.setContext(LoggingInterceptor.name);
+    this.loggerService.setContext(LoggerInterceptor.name);
   }
 
   intercept(context: ExecutionContext, next: CallHandler): Observable<any> {
