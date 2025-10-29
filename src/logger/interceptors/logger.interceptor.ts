@@ -4,7 +4,7 @@ import {
   Injectable,
   NestInterceptor,
 } from '@nestjs/common';
-import { Request } from 'express';
+import { Request, Response } from 'express';
 import { Observable } from 'rxjs';
 import { tap } from 'rxjs/operators';
 import { LoggerService } from '../logger.service';
@@ -16,20 +16,31 @@ export class LoggerInterceptor implements NestInterceptor {
   }
 
   intercept(context: ExecutionContext, next: CallHandler): Observable<any> {
-    const request = context.switchToHttp().getRequest<Request>();
-    const method = request.method;
-    const url = request.url;
-    const now = Date.now();
-
     return next.handle().pipe(
       tap(() => {
-        const response = context.switchToHttp().getResponse();
-        const statusCode = response.statusCode;
-        const delay = Date.now() - now;
+        const request = context.switchToHttp().getRequest<Request>();
+        const response = context.switchToHttp().getResponse<Response>();
         this.loggerService.log(
-          context,
-          `${method} ${url} ${statusCode} ${delay}ms`,
-          { ip: request.ip }
+          {
+            client: {
+              platform: request.header('x-client-platform'),
+              login: request.header('x-client-login'),
+              ip: request.ip
+            }
+          },
+          {
+            req: {
+              method: request.method,
+              endpoint: request.url,
+              content: {
+                length: request.header('content-length'),
+                type: request.header('content-type'),
+              },
+              query: request.query
+            },
+            resStatus: response.statusCode,
+            reqId: request['requestId']
+          }
         );
       }),
     );

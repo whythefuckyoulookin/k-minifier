@@ -1,7 +1,6 @@
-import { ExecutionContext, Inject, Injectable, Scope } from '@nestjs/common';
+import { Inject, Injectable, Scope } from '@nestjs/common';
 import { type LoggerConfig, loggerConfig } from 'src/config/logger.config';
-import winston, { createLogger, Logger, transports } from 'winston';
-import "winston-daily-rotate-file"
+import { createLogger, Logger } from 'winston';
 
 @Injectable({ scope: Scope.TRANSIENT })
 export class LoggerService {
@@ -12,98 +11,54 @@ export class LoggerService {
     @Inject(loggerConfig.KEY)
     private readonly config: LoggerConfig
   ) {
-    this.logger = createLogger({
-      ...this.config,
-      transports: [new transports.DailyRotateFile({
-        filename: 'application-%DATE%.log',
-        datePattern: 'YYYY-MM-DD',
-        level: 'info',
-        maxFiles: '30d',
-        dirname: 'logs',
-      })],
-    });
+    this.logger = createLogger({ ...this.config });
   }
 
-  public setContext(context: string): void {
+  public setContext(context: string) {
     this.context = context;
   }
 
-  error(
-    ctx: ExecutionContext,
-    message: string,
-    meta?: Record<string, any>,
-  ): Logger {
-    const timestamp = new Date().toISOString();
-
+  error(ctx: Record<string, any>, meta?: Record<string, any>) {
     return this.logger.error({
-      message,
       contextName: this.context,
       ctx,
-      timestamp,
+      timestamp: new Date().toISOString(),
       ...meta,
     });
   }
 
-  warn(
-    ctx: ExecutionContext,
-    message: string,
-    meta?: Record<string, any>,
-  ): Logger {
-    const timestamp = new Date().toISOString();
-
+  warn(ctx: Record<string, any>, meta?: Record<string, any>) {
     return this.logger.warn({
-      message,
       contextName: this.context,
       ctx,
-      timestamp,
+      timestamp: new Date().toISOString(),
       ...meta,
     });
   }
 
-  debug(
-    ctx: ExecutionContext,
-    message: string,
-    meta?: Record<string, any>,
-  ): Logger {
-    const timestamp = new Date().toISOString();
-
+  debug(ctx: Record<string, any>, meta?: Record<string, any>) {
     return this.logger.debug({
-      message,
       contextName: this.context,
       ctx,
-      timestamp,
+      timestamp: new Date().toISOString(),
       ...meta,
     });
   }
 
-  verbose(
-    ctx: ExecutionContext,
-    message: string,
-    meta?: Record<string, any>,
-  ): Logger {
-    const timestamp = new Date().toISOString();
-
+  verbose(ctx: Record<string, any>, meta?: Record<string, any>) {
     return this.logger.verbose({
-      message,
       contextName: this.context,
       ctx,
-      timestamp,
+      timestamp: new Date().toISOString(),
       ...meta,
     });
   }
 
-  log(
-    ctx: ExecutionContext | undefined,
-    message: string,
-    meta?: Record<string, any>,
-  ): Logger {
-    const timestamp = new Date().toISOString();
-
+  log(ctx: Record<string, any>, meta?: Record<string, any>) {
     return this.logger.info({
-      message,
       contextName: this.context,
       ctx,
-      timestamp,
+      timestamp: new Date().toISOString(),
       ...meta,
     });
   }
