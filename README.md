@@ -1,8 +1,11 @@
+---
+author: @whythefuckyoulookin
+date: 29/10/2025
+---
+
 # kMinifier
 
 > NestJS сервер для минификации CSS файлов с поддержкой бэкапов
-
-**Автор:** whythefuckyoulookin
 
 ## Установка
 
