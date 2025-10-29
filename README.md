@@ -1,5 +1,5 @@
 ---
-author: @whythefuckyoulookin
+author: whythefuckyoulookin
 date: 29/10/2025
 ---
 
