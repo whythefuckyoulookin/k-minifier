@@ -1,0 +1,13 @@
+@charset "utf-8"; body, #main, #topcontact .phone, #submenu ul li a, .ssubm, .typeblock header, .typeblock header a, .commenttype1 li div.name b, div.dialog .h1, table, td, footer a, .spoler.act a, .contact_title, .vkladki ul.kz_tabs_items a span.vk_op {
+    color: #818181;
+}
+
+.submenutype1, .modal_head, ul.h_menu_sec, .btn-strt, a.btn-strt-a, span.radio:before, .catalog-items .fast_prew, .slider-blue .irs-slider, .slider-blue span.irs-bar, .filter-main-slider .irs-bar, body .mainmenubg, a.btn-a,ul.left_m_sec li.menu_open span.menu_plus:before, ul.left_m_sec li.menu_open span.menu_plus:after, body .blocks .owl-nav div, body .blocks .owl-dot span, body .owl-carousel .owl-nav div, body .owl-carousel .owl-dot span, .filter_m_hide .filter_m_hide_footer, .news-date > *, .template-1 li.sub, #cart-info .t-border, .cart-tags a:hover, .template-type2 #cart-info .tabs .tab a.active, .incart-typefull1 .incart_up, .incart-typefull1 .incart_down, .radio-standart .rdo-st:before, .userline-option .chb-standart label input[type='checkbox']:checked + span {
+    background-color: #818181;
+}
+
+.mblk-type-2 li.active > a, .ask_question a, .fast_buy a, .kz_napisat a, #cart-info-mini:before, .template-type2 .map_marker.icons:before {
+    color: #818181;
+}
+
+.ask_question {{{} .

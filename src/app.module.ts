@@ -10,6 +10,7 @@ import { LoggerModule } from './logger/logger.module';
 import { loggerConfig } from './config/logger.config';
 import { RequestIdMiddleware } from './middlewares/request-id.middleware';
 import { AllHttpExceptionsFilter } from './logger/filters/logger.filter';
+import { ClientIpMiddleware } from './middlewares/client-ip.middleware';
 
 @Module({
   imports: [
@@ -27,6 +28,7 @@ import { AllHttpExceptionsFilter } from './logger/filters/logger.filter';
 })
 export class AppModule implements NestModule {
   configure(consumer: MiddlewareConsumer) {
+    consumer.apply(ClientIpMiddleware).forRoutes('*path')
     consumer.apply(RequestIdMiddleware).forRoutes('*path')
   }
 }

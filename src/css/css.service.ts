@@ -1,11 +1,10 @@
-import { Inject, Injectable, NotFoundException, StreamableFile } from "@nestjs/common";
+import { BadRequestException, Inject, Injectable, NotFoundException, StreamableFile } from "@nestjs/common";
 import { transform } from "lightningcss";
 import { basename, extname } from "path";
 import { type CssConfig, cssConfig } from "src/config/css.config";
 import { FilesService } from "src/files/files.service";
 import { IClientHeaders } from "src/css/decorators/client-headers.decorator";
 import { randomUUID } from "crypto";
-
 @Injectable()
 export class CssService {
   constructor(
@@ -17,18 +16,26 @@ export class CssService {
   async minifyCss(file: Express.Multer.File, client: IClientHeaders) {
     const fileExt = extname(file.originalname)
     const fileName = basename(file.originalname, fileExt)
-    const minifiedCssPath = `${this.config.minifiedCssDest}/${this.filesService.getFileHash(file.buffer)}.min${fileExt}`
+    const minifiedCssPath = `${this.config.minifiedCssDest}/${this.filesService.getFileHash(file.buffer)}`
 
     let minifiedCss = await this.filesService.getFile(minifiedCssPath)
 
     if (!minifiedCss) {
-      let minifyResult = transform({
-        ...this.config.lightningcssOptions,
-        filename: `${Date.now()}.tmp.${file.filename}`,
-        code: file.buffer,
-      });
-      minifiedCss = Buffer.from(minifyResult.code)
-      await this.filesService.saveFile(minifiedCss, minifiedCssPath)
+      try {
+        let minifyResult = transform({
+          ...this.config.lightningcssOptions,
+          filename: `${Date.now()}-${randomUUID()}-${fileName}.tmp`,
+          code: file.buffer,
+        });
+        minifiedCss = Buffer.from(minifyResult.code)
+        await this.filesService.saveFile(minifiedCss, minifiedCssPath)
+      } catch (err) {
+        throw new BadRequestException("При минификации файла произошла ошибка", {
+          cause: err.message,
+          description: err,
+          
+        })
+      }
     }
 
     await this.filesService.saveFile(
@@ -45,7 +52,7 @@ export class CssService {
   async getBackupList(client: IClientHeaders) {
     const backupList = await this.filesService.getDir(`${client.platform}/${client.login}`)
     return backupList ? backupList
-      .map(backup => backup.split('.')[0])
+      .map(backup => backup.split('-')[0])
       .reduce((prev, timestamp) => ({ ...prev, ...{ [new Date(Number(timestamp)).toISOString()]: timestamp } }), {})
       : []
   }

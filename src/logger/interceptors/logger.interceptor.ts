@@ -25,7 +25,7 @@ export class LoggerInterceptor implements NestInterceptor {
             client: {
               platform: request.header('x-client-platform'),
               login: request.header('x-client-login'),
-              ip: request.ip
+              ip: request.clientIp ?? request.ip
             }
           },
           {
@@ -39,7 +39,7 @@ export class LoggerInterceptor implements NestInterceptor {
               query: request.query
             },
             resStatus: response.statusCode,
-            reqId: request['requestId']
+            reqId: request.requestId
           }
         );
       }),

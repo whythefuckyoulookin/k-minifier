@@ -11,7 +11,6 @@ export class AllHttpExceptionsFilter implements ExceptionFilter {
 
   catch(exception: HttpException, host: ArgumentsHost) {
     const ctx = host.switchToHttp();
-    const response = ctx.getResponse<Response>();
     const request = ctx.getRequest<Request>();
     const status = exception.getStatus();
 
@@ -33,7 +32,6 @@ export class AllHttpExceptionsFilter implements ExceptionFilter {
           },
           query: request.query
         },
-        resStatus: response.statusCode,
         reqId: request['requestId'],
         err: {
           code: exception.getStatus(),
@@ -43,13 +41,29 @@ export class AllHttpExceptionsFilter implements ExceptionFilter {
         }
       }
     );
-
-    response
+    ctx
+      .getResponse<Response>()
       .status(status)
       .json({
         statusCode: status,
         timestamp: new Date().toISOString(),
         path: request.url,
+        message: exception.message,
+        error: {
+          cause: exception.cause,
+          name: exception.name,
+          // @ts-ignore
+          ...(exception.options && exception.options.description &&
+          {
+            description: {
+              // @ts-ignore
+              loc: exception.options.description.loc,
+              // @ts-ignore
+              data: exception.options.description.data
+            }
+          }
+          )
+        }
       });
   }
 }
